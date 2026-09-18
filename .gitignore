@@ -22,3 +22,5 @@ app/google-services.json
 *.tmp
 *.log
 dump.xml
+.wrangler/
+
