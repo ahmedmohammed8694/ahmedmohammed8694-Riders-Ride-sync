@@ -64,9 +64,9 @@ fun LocationPermissionGateway(
         }
     }
 
-    val backgroundColor = Color(0xFF0F172A)
-    val accentColor = Color(0xFFF59E0B)
-    val surfaceColor = Color(0xFF1E293B)
+    val backgroundColor = com.ridesync.ui.theme.HudColors.ObsidianCanvas
+    val accentColor = com.ridesync.ui.theme.HudColors.CyanPrimary
+    val surfaceColor = com.ridesync.ui.theme.HudColors.ObsidianSurface
 
     if (!hasForeground) {
         // Stage 1: Foreground Location Request Screen
@@ -77,6 +77,9 @@ fun LocationPermissionGateway(
                 .padding(24.dp),
             contentAlignment = Alignment.Center
         ) {
+            // High-Contrast Rally Instrument Graphic Background Pattern
+            com.ridesync.ui.theme.RallyGridGraphicBackground()
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -103,15 +106,15 @@ fun LocationPermissionGateway(
                     text = "Location Access Required",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = com.ridesync.ui.theme.HudColors.TextCrispWhite
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "RideSync requires precise GPS coordinates to show your location on the convoy map and calculate distance metrics.",
+                    text = "Riders Ride Sync (RRS) requires precise GPS coordinates to show your location on the convoy map and calculate distance metrics.",
                     fontSize = 15.sp,
-                    color = Color(0xFF94A3B8),
+                    color = com.ridesync.ui.theme.HudColors.TextCoolSilver,
                     textAlign = TextAlign.Center
                 )
 
@@ -132,7 +135,7 @@ fun LocationPermissionGateway(
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = accentColor,
-                        contentColor = Color.Black
+                        contentColor = Color.White
                     )
                 ) {
                     Text(
@@ -162,7 +165,7 @@ fun LocationPermissionGateway(
                         )
                         Text(
                             text = "Background Ride Tracking",
-                            color = Color.White,
+                            color = com.ridesync.ui.theme.HudColors.TextCrispWhite,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp
                         )
@@ -172,7 +175,7 @@ fun LocationPermissionGateway(
                     Column {
                         Text(
                             text = "To keep you connected with the convoy while your phone screen is off or mounted:",
-                            color = Color(0xFFCBD5E1),
+                            color = com.ridesync.ui.theme.HudColors.TextCoolSilver,
                             fontSize = 14.sp
                         )
 
@@ -208,7 +211,7 @@ fun LocationPermissionGateway(
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = accentColor,
-                            contentColor = Color.Black
+                            contentColor = Color.White
                         ),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.fillMaxWidth()
@@ -224,7 +227,7 @@ fun LocationPermissionGateway(
                     TextButton(
                         onClick = { showBackgroundRationaleModal = false }
                     ) {
-                        Text("Later", color = Color(0xFF94A3B8))
+                        Text("Later", color = com.ridesync.ui.theme.HudColors.TextCoolSilver)
                     }
                 }
             )
@@ -245,7 +248,7 @@ private fun PermissionRationaleItem(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = Color(0xFFF59E0B),
+            tint = com.ridesync.ui.theme.HudColors.CyanPrimary,
             modifier = Modifier
                 .size(24.dp)
                 .padding(top = 2.dp, end = 12.dp)
@@ -253,13 +256,13 @@ private fun PermissionRationaleItem(
         Column {
             Text(
                 text = title,
-                color = Color.White,
+                color = com.ridesync.ui.theme.HudColors.TextCrispWhite,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp
             )
             Text(
                 text = description,
-                color = Color(0xFF94A3B8),
+                color = com.ridesync.ui.theme.HudColors.TextCoolSilver,
                 fontSize = 13.sp
             )
         }

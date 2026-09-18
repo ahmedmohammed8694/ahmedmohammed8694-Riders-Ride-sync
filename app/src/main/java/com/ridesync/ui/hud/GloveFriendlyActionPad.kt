@@ -41,72 +41,54 @@ fun GloveFriendlyActionPad(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // "I'm Stopping" Button (68dp height)
-            Button(
+            // "I'm Stopping" Tactile 3D Button (68dp height)
+            TactileGloveButton(
                 onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     showStopPickerModal = true
                 },
-                modifier = Modifier
-                    .weight(1f)
-                    .height(68.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFF59E0B), // Amber
-                    contentColor = Color.Black
-                ),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                modifier = Modifier.weight(1f),
+                minHeight = 68.dp,
+                containerGradient = listOf(Color(0xFFD97706), Color(0xFFB45309)),
+                accentGlow = Color(0xFFFBBF24)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.WarningAmber,
-                        contentDescription = null,
-                        modifier = Modifier.size(28.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "I'm Stopping",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.WarningAmber,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "I'm Stopping",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color.Black
+                )
             }
 
-            // "SOS / Emergency" Button (68dp height)
-            Button(
+            // "SOS / Emergency" Tactile 3D Button (68dp height)
+            TactileGloveButton(
                 onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     onSosReported()
                 },
-                modifier = Modifier
-                    .weight(1f)
-                    .height(68.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFEF4444), // Crimson Red
-                    contentColor = Color.White
-                ),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                modifier = Modifier.weight(1f),
+                minHeight = 68.dp,
+                containerGradient = listOf(Color(0xFFDC2626), Color(0xFF991B1B)),
+                accentGlow = Color(0xFFFCA5A5)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = null,
-                        modifier = Modifier.size(28.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "SOS",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "SOS",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color.White
+                )
             }
         }
     }
@@ -114,11 +96,11 @@ fun GloveFriendlyActionPad(
     if (showStopPickerModal) {
         AlertDialog(
             onDismissRequest = { showStopPickerModal = false },
-            containerColor = Color(0xFF1E293B),
+            containerColor = com.ridesync.ui.theme.HudColors.ObsidianSurface,
             title = {
                 Text(
                     text = "Select Stop Reason",
-                    color = Color.White,
+                    color = com.ridesync.ui.theme.HudColors.TextCrispWhite,
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.sp
                 )
@@ -131,9 +113,8 @@ fun GloveFriendlyActionPad(
                     StopReasonOptionCard(
                         title = "Fuel Stop ⛽",
                         icon = Icons.Default.LocalGasStation,
-                        color = Color(0xFF38BDF8),
+                        color = com.ridesync.ui.theme.HudColors.CyanPrimary,
                         onClick = {
-                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                             onStopReported(StopReason.FUEL)
                             showStopPickerModal = false
                         }
@@ -141,9 +122,8 @@ fun GloveFriendlyActionPad(
                     StopReasonOptionCard(
                         title = "Food / Rest 🍔",
                         icon = Icons.Default.Restaurant,
-                        color = Color(0xFF22C55E),
+                        color = com.ridesync.ui.theme.HudColors.StatusRiding,
                         onClick = {
-                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                             onStopReported(StopReason.FOOD)
                             showStopPickerModal = false
                         }
@@ -151,9 +131,8 @@ fun GloveFriendlyActionPad(
                     StopReasonOptionCard(
                         title = "Breakdown 🛠️",
                         icon = Icons.Default.Build,
-                        color = Color(0xFFF97316),
+                        color = Color(0xFFEA580C),
                         onClick = {
-                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                             onStopReported(StopReason.BREAKDOWN)
                             showStopPickerModal = false
                         }
@@ -161,9 +140,8 @@ fun GloveFriendlyActionPad(
                     StopReasonOptionCard(
                         title = "Short Rest ☕",
                         icon = Icons.Default.Coffee,
-                        color = Color(0xFFA855F7),
+                        color = com.ridesync.ui.theme.HudColors.CobaltBlue,
                         onClick = {
-                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                             onStopReported(StopReason.REST)
                             showStopPickerModal = false
                         }
@@ -173,7 +151,7 @@ fun GloveFriendlyActionPad(
             confirmButton = {},
             dismissButton = {
                 TextButton(onClick = { showStopPickerModal = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8), fontSize = 16.sp)
+                    Text("Cancel", color = com.ridesync.ui.theme.HudColors.TextCoolSilver, fontSize = 16.sp)
                 }
             }
         )
@@ -187,17 +165,16 @@ private fun StopReasonOptionCard(
     color: Color,
     onClick: () -> Unit
 ) {
-    Surface(
-        color = Color(0xFF0F172A),
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp)
-            .clickable(onClick = onClick)
+    TactileGloveButton(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        minHeight = 64.dp,
+        containerGradient = listOf(Color(0xFFFFFFFF), Color(0xFFF1F5F9)),
+        accentGlow = color
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 20.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Icon(
                 imageVector = icon,
@@ -208,7 +185,7 @@ private fun StopReasonOptionCard(
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = title,
-                color = Color.White,
+                color = com.ridesync.ui.theme.HudColors.TextCrispWhite,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )

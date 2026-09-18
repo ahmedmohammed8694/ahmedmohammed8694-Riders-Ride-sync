@@ -1,7 +1,9 @@
 package com.ridesync.ui.qr
 
 import android.util.Size
+import androidx.annotation.OptIn
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -28,6 +30,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 
+@OptIn(ExperimentalGetImage::class)
 @Composable
 fun QrCodeScannerScreen(
     onQrCodeScanned: (String) -> Unit,
@@ -65,7 +68,7 @@ fun QrCodeScannerScreen(
                         .build()
 
                     imageAnalysis.setAnalyzer(ContextCompat.getMainExecutor(ctx)) { imageProxy ->
-                        val mediaImage = imageProxy.mediaImage
+                        val mediaImage = imageProxy.image
                         if (mediaImage != null && !hasScanned) {
                             val inputImage = InputImage.fromMediaImage(
                                 mediaImage,
@@ -75,7 +78,7 @@ fun QrCodeScannerScreen(
                                 .addOnSuccessListener { barcodes ->
                                     for (barcode in barcodes) {
                                         val rawValue = barcode.rawValue
-                                        if (!rawValue.isNull_or_Empty() && !hasScanned) {
+                                        if (rawValue != null && rawValue.trim().isNotEmpty() && !hasScanned) {
                                             hasScanned = true
                                             onQrCodeScanned(rawValue)
                                             break
@@ -108,7 +111,7 @@ fun QrCodeScannerScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Overlay scan target window
+        // Overlay scan target window with Dakar HUD Graphic Frame
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -116,39 +119,47 @@ fun QrCodeScannerScreen(
             Box(
                 modifier = Modifier
                     .size(280.dp)
-                    .border(4.dp, Color(0xFFF59E0B), RoundedCornerShape(24.dp))
+                    .border(4.dp, com.ridesync.ui.theme.HudColors.CyanPrimary, RoundedCornerShape(24.dp))
+                    .background(com.ridesync.ui.theme.HudColors.CyanPrimary.copy(alpha = 0.08f), RoundedCornerShape(24.dp))
             )
         }
 
         // Top bar instruction header
-        Column(
+        Surface(
+            color = com.ridesync.ui.theme.HudColors.FrostedOverlay,
+            shape = RoundedCornerShape(20.dp),
+            shadowElevation = 8.dp,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(24.dp)
-                .align(Alignment.TopCenter),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .align(Alignment.TopCenter)
+                .border(1.dp, com.ridesync.ui.theme.HudColors.FrostedBorder, RoundedCornerShape(20.dp))
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                text = "Scan Convoy QR Code",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Text(
-                text = "Align QR code inside frame to join trip",
-                fontSize = 14.sp,
-                color = Color(0xFF94A3B8),
-                textAlign = TextAlign.Center
-            )
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Scan Convoy QR Code",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = com.ridesync.ui.theme.HudColors.TextCrispWhite
+                )
+                Text(
+                    text = "Align QR code inside frame to join trip",
+                    fontSize = 14.sp,
+                    color = com.ridesync.ui.theme.HudColors.TextCoolSilver,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
 
         // Cancel button
         Button(
             onClick = onCancel,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF1E293B),
-                contentColor = Color.White
+                containerColor = com.ridesync.ui.theme.HudColors.ObsidianSurface,
+                contentColor = com.ridesync.ui.theme.HudColors.TextCrispWhite
             ),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
@@ -156,10 +167,9 @@ fun QrCodeScannerScreen(
                 .padding(24.dp)
                 .height(60.dp)
                 .align(Alignment.BottomCenter)
+                .border(1.5.dp, com.ridesync.ui.theme.HudColors.CyanPrimary, RoundedCornerShape(16.dp))
         ) {
-            Text("Cancel Scanner", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text("Cancel Scanner", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = com.ridesync.ui.theme.HudColors.CyanPrimary)
         }
     }
 }
-
-private fun String?.isNull_or_Empty(): Boolean = this == null || this.trim().isEmpty()

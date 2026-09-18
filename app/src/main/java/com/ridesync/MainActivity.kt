@@ -1,58 +1,84 @@
 package com.ridesync
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.sp
+import com.ridesync.ui.MainContainerScreen
 import com.ridesync.ui.auth.*
+import com.ridesync.ui.profile.UserProfileScreen
 
 class MainActivity : ComponentActivity() {
 
     private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate()
+        super.onCreate(savedInstanceState)
+        sanitizeIncomingIntent(intent)
         setContent {
-            MaterialTheme {
+            com.ridesync.ui.theme.RideSyncTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = Color(0xFF0F172A)
+                    color = com.ridesync.ui.theme.HudColors.ObsidianCanvas
                 ) {
                     val authState by authViewModel.uiState.collectAsState()
+                    val screenMode by authViewModel.screenMode.collectAsState()
+                    val passwordResetStatus by authViewModel.passwordResetStatus.collectAsState()
 
                     when (val state = authState) {
-                        is AuthState.Idle, is AuthState.Authenticating -> {
-                            LoginScreen(
-                                onGoogleSignInClick = { idToken ->
-                                    authViewModel.onGoogleIdTokenReceived(idToken)
-                                },
-                                isLoading = state is AuthState.Authenticating,
-                                errorMessage = null
-                            )
-                        }
+                        is AuthState.Idle, is AuthState.Authenticating, is AuthState.Error -> {
+                            val errorMessage = (state as? AuthState.Error)?.message
+                            val isLoading = state is AuthState.Authenticating
 
-                        is AuthState.Error -> {
-                            LoginScreen(
-                                onGoogleSignInClick = { idToken ->
-                                    authViewModel.onGoogleIdTokenReceived(idToken)
-                                },
-                                isLoading = false,
-                                errorMessage = state.message
-                            )
+                            when (screenMode) {
+                                AuthScreenMode.LOGIN -> {
+                                    LoginScreen(
+                                        onEmailSignInClick = { email, pass ->
+                                            authViewModel.signInWithEmail(email, pass)
+                                        },
+                                        onGoogleSignInClick = { idToken ->
+                                            authViewModel.onGoogleIdTokenReceived(idToken)
+                                        },
+                                        onNavigateToSignUp = {
+                                            authViewModel.setScreenMode(AuthScreenMode.SIGNUP)
+                                        },
+                                        onForgotPasswordClick = { email ->
+                                            authViewModel.sendPasswordResetEmail(email)
+                                        },
+                                        onGuestSignInClick = {
+                                            authViewModel.signInAnonymously()
+                                        },
+                                        isLoading = isLoading,
+                                        errorMessage = errorMessage,
+                                        passwordResetStatusMessage = passwordResetStatus
+                                    )
+                                }
+
+                                AuthScreenMode.SIGNUP -> {
+                                    SignUpScreen(
+                                        onSignUpClick = { name, email, pass, confirmPass ->
+                                            authViewModel.signUpWithEmail(email, pass, confirmPass, name)
+                                        },
+                                        onGoogleSignUpClick = { idToken ->
+                                            authViewModel.onGoogleIdTokenReceived(idToken)
+                                        },
+                                        onNavigateToLogin = {
+                                            authViewModel.setScreenMode(AuthScreenMode.LOGIN)
+                                        },
+                                        isLoading = isLoading,
+                                        errorMessage = errorMessage
+                                    )
+                                }
+                            }
                         }
 
                         is AuthState.ProfileSetupRequired -> {
@@ -66,25 +92,45 @@ class MainActivity : ComponentActivity() {
                         }
 
                         is AuthState.Authenticated -> {
-                            MainAuthenticatedScreen(userProfile = state.userProfile)
+                            MainContainerScreen(
+                                userProfile = state.userProfile,
+                                onSaveUserProfile = { updatedProfile ->
+                                    authViewModel.updateFullUserProfile(updatedProfile)
+                                },
+                                onSignOut = {
+                                    authViewModel.signOut()
+                                }
+                            )
                         }
                     }
                 }
             }
         }
     }
-}
 
-@Composable
-fun MainAuthenticatedScreen(userProfile: com.ridesync.data.model.UserProfile) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Welcome to RideSync, ${userProfile.displayName}!\nVehicle: ${userProfile.vehicleModel}",
-            color = Color.White,
-            fontSize = 20.sp
-        )
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        sanitizeIncomingIntent(intent)
+    }
+
+    private fun sanitizeIncomingIntent(intent: Intent?) {
+        if (intent == null) return
+        try {
+            // Strip any nested un-sanitized Intent extras to prevent Intent Redirection vulnerabilities
+            val extras = intent.extras
+            if (extras != null) {
+                for (key in extras.keySet()) {
+                    val value = extras.get(key)
+                    if (value is Intent) {
+                        Log.w("MainActivity", "Blocked potentially unsafe nested Intent extra: $key")
+                        intent.removeExtra(key)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Failed to sanitize incoming intent extras", e)
+        }
     }
 }
+

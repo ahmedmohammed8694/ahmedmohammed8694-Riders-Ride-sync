@@ -40,7 +40,7 @@ class HelmetAudioEngine(context: Context) : TextToSpeech.OnInitListener {
             Log.w(TAG, "TTS requested before initialization complete")
             return
         }
-        val utteranceId = "RideSync_Alert_${System.currentTimeMillis()}"
+        val utteranceId = "RRS_Alert_${System.currentTimeMillis()}"
         tts?.speak(text, TextToSpeech.QUEUE_ADD, null, utteranceId)
     }
 

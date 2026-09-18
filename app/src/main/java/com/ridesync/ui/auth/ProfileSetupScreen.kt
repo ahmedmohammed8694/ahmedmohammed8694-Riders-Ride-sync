@@ -1,5 +1,6 @@
 package com.ridesync.ui.auth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,10 +16,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ridesync.R
 
 @Composable
 fun ProfileSetupScreen(
@@ -31,9 +35,9 @@ fun ProfileSetupScreen(
     var emergencyPhone by remember { mutableStateOf("") }
     var shareLocation by remember { mutableStateOf(true) }
 
-    val backgroundColor = Color(0xFF0F172A)
-    val cardColor = Color(0xFF1E293B)
-    val accentColor = Color(0xFFF59E0B)
+    val backgroundColor = com.ridesync.ui.theme.HudColors.ObsidianCanvas
+    val cardColor = com.ridesync.ui.theme.HudColors.ObsidianSurface
+    val accentColor = com.ridesync.ui.theme.HudColors.CyanPrimary
 
     Box(
         modifier = Modifier
@@ -41,6 +45,9 @@ fun ProfileSetupScreen(
             .background(backgroundColor)
             .padding(24.dp)
     ) {
+        // High-Contrast Rally Instrument Graphic Background Pattern
+        com.ridesync.ui.theme.RallyGridGraphicBackground()
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -48,19 +55,28 @@ fun ProfileSetupScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Image(
+                    painter = painterResource(id = R.drawable.ic_app_logo_badge),
+                    contentDescription = "RRS Logo",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.height(56.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
                 
                 Text(
                     text = "Welcome, $initialDisplayName!",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = com.ridesync.ui.theme.HudColors.TextCrispWhite
                 )
 
                 Text(
                     text = "Set up your motorcycle profile to enable accurate fuel stop alerts and convoy tracking.",
                     fontSize = 15.sp,
-                    color = Color(0xFF94A3B8),
+                    color = com.ridesync.ui.theme.HudColors.TextCoolSilver,
                     modifier = Modifier.padding(top = 8.dp, bottom = 32.dp)
                 )
 
@@ -84,11 +100,11 @@ fun ProfileSetupScreen(
                         focusedContainerColor = cardColor,
                         unfocusedContainerColor = cardColor,
                         focusedBorderColor = accentColor,
-                        unfocusedBorderColor = Color(0xFF334155),
+                        unfocusedBorderColor = com.ridesync.ui.theme.HudColors.ObsidianBorder,
                         focusedLabelColor = accentColor,
-                        unfocusedLabelColor = Color(0xFF94A3B8),
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
+                        unfocusedLabelColor = com.ridesync.ui.theme.HudColors.TextCoolSilver,
+                        focusedTextColor = com.ridesync.ui.theme.HudColors.TextCrispWhite,
+                        unfocusedTextColor = com.ridesync.ui.theme.HudColors.TextCrispWhite
                     )
                 )
 
@@ -113,11 +129,11 @@ fun ProfileSetupScreen(
                         focusedContainerColor = cardColor,
                         unfocusedContainerColor = cardColor,
                         focusedBorderColor = accentColor,
-                        unfocusedBorderColor = Color(0xFF334155),
+                        unfocusedBorderColor = com.ridesync.ui.theme.HudColors.ObsidianBorder,
                         focusedLabelColor = accentColor,
-                        unfocusedLabelColor = Color(0xFF94A3B8),
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
+                        unfocusedLabelColor = com.ridesync.ui.theme.HudColors.TextCoolSilver,
+                        focusedTextColor = com.ridesync.ui.theme.HudColors.TextCrispWhite,
+                        unfocusedTextColor = com.ridesync.ui.theme.HudColors.TextCrispWhite
                     )
                 )
 
@@ -142,11 +158,11 @@ fun ProfileSetupScreen(
                         focusedContainerColor = cardColor,
                         unfocusedContainerColor = cardColor,
                         focusedBorderColor = accentColor,
-                        unfocusedBorderColor = Color(0xFF334155),
+                        unfocusedBorderColor = com.ridesync.ui.theme.HudColors.ObsidianBorder,
                         focusedLabelColor = accentColor,
-                        unfocusedLabelColor = Color(0xFF94A3B8),
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White
+                        unfocusedLabelColor = com.ridesync.ui.theme.HudColors.TextCoolSilver,
+                        focusedTextColor = com.ridesync.ui.theme.HudColors.TextCrispWhite,
+                        unfocusedTextColor = com.ridesync.ui.theme.HudColors.TextCrispWhite
                     )
                 )
 
@@ -166,13 +182,13 @@ fun ProfileSetupScreen(
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = "Share Live Location with Convoy",
-                                color = Color.White,
+                                color = com.ridesync.ui.theme.HudColors.TextCrispWhite,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 16.sp
                             )
                             Text(
                                 text = "Allows convoy members to track your position during active rides",
-                                color = Color(0xFF94A3B8),
+                                color = com.ridesync.ui.theme.HudColors.TextCoolSilver,
                                 fontSize = 13.sp
                             )
                         }
@@ -203,12 +219,12 @@ fun ProfileSetupScreen(
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = accentColor,
-                    contentColor = Color.Black
+                    contentColor = Color.White
                 )
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
-                        color = Color.Black,
+                        color = Color.White,
                         modifier = Modifier.size(24.dp),
                         strokeWidth = 2.5.dp
                     )

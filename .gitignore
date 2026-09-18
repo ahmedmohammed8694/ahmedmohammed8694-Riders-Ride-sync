@@ -1,0 +1,24 @@
+# Android Gradle & Build outputs
+*.apk
+*.aar
+*.aab
+build/
+app/build/
+.gradle/
+
+# Local configuration & Secrets
+local.properties
+google-services.json
+app/google-services.json
+.env
+
+# IDE & Editor caches
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Temporary files
+*.tmp
+*.log
+dump.xml

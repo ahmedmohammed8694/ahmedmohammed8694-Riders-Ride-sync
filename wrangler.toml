@@ -1,0 +1,23 @@
+name = "ridesync-cloudflare-backend"
+main = "cloudflare-backend/src/index.ts"
+compatibility_date = "2026-09-18"
+
+[vars]
+ENVIRONMENT = "production"
+APP_NAME = "RIDERsYNK"
+
+# Cloudflare D1 Serverless SQL Database
+[[d1_databases]]
+binding = "DB"
+database_name = "ridesync-db"
+database_id = "ridesync-d1-production-id"
+
+# Cloudflare R2 Object Storage (Zero-Egress Fees for Trip Audio/Assets)
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "ridesync-media-bucket"
+
+# Cloudflare KV (Real-time Convoy Session Cache)
+[[kv_namespaces]]
+binding = "CONVOY_CACHE"
+id = "ridesync-convoy-kv-id"

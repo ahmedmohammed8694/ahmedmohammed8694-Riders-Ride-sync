@@ -122,25 +122,29 @@ class RideTrackingService : Service() {
     private fun reconfigureLocationRequest(state: KinematicState) {
         if (!isTrackingStarted) return
 
-        fusedLocationClient.removeLocationUpdates(locationCallback)
+        serviceScope.launch(Dispatchers.Default) {
+            try {
+                fusedLocationClient.removeLocationUpdates(locationCallback)
 
-        val locationRequest = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            state.gpsIntervalMs
-        ).apply {
-            setMinUpdateIntervalMillis(state.minUpdateIntervalMs)
-            setWaitForAccurateLocation(false)
-        }.build()
+                val locationRequest = LocationRequest.Builder(
+                    Priority.PRIORITY_HIGH_ACCURACY,
+                    state.gpsIntervalMs
+                ).apply {
+                    setMinUpdateIntervalMillis(state.minUpdateIntervalMs)
+                    setWaitForAccurateLocation(false)
+                }.build()
 
-        try {
-            fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.getMainLooper()
-            )
-            Log.d(TAG, "Location request reconfigured for state: $state (${state.gpsIntervalMs}ms)")
-        } catch (e: SecurityException) {
-            Log.e(TAG, "Missing location permission for service", e)
+                fusedLocationClient.requestLocationUpdates(
+                    locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
+                Log.d(TAG, "Location request reconfigured for state: $state (${state.gpsIntervalMs}ms)")
+            } catch (e: SecurityException) {
+                Log.e(TAG, "Missing location permission for service", e)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to reconfigure location request", e)
+            }
         }
     }
 
@@ -156,7 +160,7 @@ class RideTrackingService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "RideSync Location Service",
+                "Riders Ride Sync Location Service",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 description = "Ongoing notification for real-time motorcycle convoy location tracking"
@@ -192,7 +196,7 @@ class RideTrackingService : Service() {
         }
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("RideSync Convoy Active")
+            .setContentTitle("Riders Ride Sync (RRS) Convoy Active")
             .setContentText("$stateText • $speedText")
             .setSmallIcon(android.R.drawable.ic_menu_compass)
             .setOngoing(true)

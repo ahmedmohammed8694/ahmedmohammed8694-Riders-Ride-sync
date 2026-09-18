@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riders Ride Sync (RRS) - Modern Convoy & Ride Ecosystem</title>
+  <meta name="description" content="Riders Ride Sync (RRS) - Smart real-time motorcycle group convoy tracking, Bluetooth helmet audio alerts, and emergency watchdog system.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0e17;
+      --bg-card: rgba(22, 29, 45, 0.7);
+      --primary: #d32f2f;
+      --primary-glow: rgba(211, 47, 47, 0.4);
+      --accent: #ff6b35;
+      --text-main: #f0f4f8;
+      --text-sub: #94a3b8;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* Background glow effect */
+    .glow-bg {
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1000px;
+      height: 600px;
+      background: radial-gradient(circle, var(--primary-glow) 0%, rgba(10, 14, 23, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .brand span {
+      color: var(--primary);
+    }
+
+    .badge {
+      background: rgba(211, 47, 47, 0.2);
+      border: 1px solid var(--primary);
+      color: #ff6b6b;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 4rem auto 2rem;
+      text-align: center;
+      padding: 0 1.5rem;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-sub);
+      max-width: 750px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.9rem 2rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, #b71c1c 100%);
+      color: white;
+      box-shadow: 0 4px 20px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--primary-glow);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .features {
+      position: relative;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      padding: 2rem;
+      border-radius: 16px;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(211, 47, 47, 0.5);
+    }
+
+    .icon-box {
+      width: 50px;
+      height: 50px;
+      background: rgba(211, 47, 47, 0.15);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+    }
+
+    footer {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--text-sub);
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-bg"></div>
+
+  <header>
+    <div class="brand">
+      🚀 <span>RRS</span> Riders Ride Sync
+    </div>
+    <div class="badge">Firebase Backed</div>
+  </header>
+
+  <section class="hero">
+    <h1>Never Ride Alone.<br>Stay Connected in Real-Time.</h1>
+    <p>Riders Ride Sync (RRS) brings ultra-low latency GPS convoy tracking, automated Lead/Sweep pack gap watchdogs, and helmet audio integration directly to motorcycle group riders.</p>
+    <div class="cta-group">
+      <a href="#" class="btn btn-primary">Download RRS Android APK</a>
+      <a href="#" class="btn btn-secondary">View Firebase Console</a>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature-card">
+      <div class="icon-box">📍</div>
+      <h3>Real-time Convoy Map</h3>
+      <p>High precision live GPS updates powered by Google Maps Compose and low-latency Firebase sync for flawless pack tracking.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon-box">🛡️</div>
+      <h3>Lead & Sweep Watchdog</h3>
+      <p>Automated algorithms compute spatial pack drift and alert ride leads whenever sweeping riders fall beyond safety thresholds.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon-box">🎧</div>
+      <h3>Helmet Audio TTS</h3>
+      <p>Hands-free voice announcements over Bluetooth helmet intercoms for convoy alerts, emergency SOS, and navigation checkpoints.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon-box">🔐</div>
+      <h3>Firebase Authentication</h3>
+      <p>Seamless Email/Password and Google Sign-in integrated with Firebase Firestore user profiles for secure rider data.</p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 Riders Ride Sync (RRS). Project context: <code>gmp-demo-project-270208544</code>. All rights reserved.
+  </footer>
+</body>
+</html>

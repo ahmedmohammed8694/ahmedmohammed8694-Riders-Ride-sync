@@ -33,6 +33,8 @@ data class ConvoyMember(
     val alongTrackProgressMeters: Double = 0.0,
     val distanceBehindLeadMeters: Double = 0.0,
     val isRouteDeviated: Boolean = false,
+    val batteryPercent: Int = 100,
+    val networkType: String = "4G",
     val lastSeenTimestamp: Long = System.currentTimeMillis()
 )
 

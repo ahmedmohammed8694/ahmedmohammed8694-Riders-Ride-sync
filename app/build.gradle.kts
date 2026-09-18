@@ -1,3 +1,15 @@
+import java.util.Properties
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
+}
+
+val mapsApiKey: String = localProperties.getProperty("MAPS_API_KEY")
+    ?: System.getenv("MAPS_API_KEY")
+    ?: "AIzaSyA-qh7UgX3ukmRt7OsTB9wLjQbUvHEA-ys"
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -16,6 +28,9 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
+
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -38,6 +53,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
+
     kotlinOptions {
         jvmTarget = "17"
         freeCompilerArgs += listOf(
@@ -49,6 +70,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -63,7 +85,24 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("androidx.tracing:tracing:1.2.0")
+        force("androidx.tracing:tracing-ktx:1.2.0")
+        eachDependency {
+            if (requested.group == "androidx.tracing") {
+                useVersion("1.2.0")
+                because("Force androidx.tracing to valid version 1.2.0 as 1.1.0 does not exist on Google Maven")
+            }
+        }
+    }
+}
+
 dependencies {
+    // Tracing
+    implementation("androidx.tracing:tracing:1.2.0")
+    implementation("androidx.tracing:tracing-ktx:1.2.0")
+
     // Core & Lifecycle
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
@@ -79,11 +118,12 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
 
-    // Firebase (Auth, Firestore, RTDB, App Check)
+    // Firebase (Auth, Firestore, RTDB, Analytics, App Check)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.analytics)
     implementation(libs.firebase.appcheck.playintegrity)
     implementation(libs.firebase.appcheck.debug)
 
@@ -91,6 +131,7 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services)
     implementation(libs.googleid)
+    implementation(libs.play.services.auth)
 
     // Google Maps & Location Engine
     implementation(libs.play.services.maps)
@@ -109,6 +150,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
 
     // CameraX & ML Kit Barcode Scanner
+    implementation("com.google.guava:guava:33.3.0-android")
+    implementation("androidx.concurrent:concurrent-futures:1.2.0")
     implementation(libs.mlkit.barcode.scanning)
     implementation(libs.camerax.core)
     implementation(libs.camerax.camera2)

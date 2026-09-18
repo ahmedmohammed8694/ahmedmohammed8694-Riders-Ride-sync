@@ -8,6 +8,8 @@ data class UserProfile(
     val userId: String = "",
     val displayName: String = "",
     val email: String = "",
+    val mobileNumber: String = "",
+    val dateOfBirth: String = "",
     val photoUrl: String = "",
     val vehicleModel: String = "",
     val tankCapacityLiters: Double = 15.0,
