@@ -7,6 +7,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.ridesync.data.model.AuthRepository
+import com.ridesync.data.model.PrivacySettings
 import com.ridesync.data.model.UserProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -223,9 +224,9 @@ class AuthRepositoryImpl(
                 put("userId", profile.userId)
                 put("displayName", profile.displayName)
                 put("vehicleModel", profile.vehicleModel)
-                put("fuelTankCapacityLiters", profile.fuelTankCapacityLiters)
-                put("shareRealtimeLocation", profile.shareRealtimeLocation)
-                put("emergencyContactNumber", profile.emergencyContactNumber)
+                put("fuelTankCapacityLiters", profile.tankCapacityLiters)
+                put("shareRealtimeLocation", profile.privacySettings.shareLocationWithGroup)
+                put("emergencyContactNumber", profile.privacySettings.emergencyContactPhone)
             }.toString()
 
             OutputStreamWriter(conn.outputStream).use { it.write(payload) }
@@ -254,9 +255,11 @@ class AuthRepositoryImpl(
                         userId = p.optString("userId", userId),
                         displayName = p.optString("displayName", "Rider"),
                         vehicleModel = p.optString("vehicleModel", "Motorcycle"),
-                        fuelTankCapacityLiters = p.optDouble("fuelTankCapacityLiters", 15.0).toFloat(),
-                        shareRealtimeLocation = p.optBoolean("shareRealtimeLocation", true),
-                        emergencyContactNumber = p.optString("emergencyContactNumber", "")
+                        tankCapacityLiters = p.optDouble("fuelTankCapacityLiters", 15.0),
+                        privacySettings = PrivacySettings(
+                            shareLocationWithGroup = p.optBoolean("shareRealtimeLocation", true),
+                            emergencyContactPhone = p.optString("emergencyContactNumber", "")
+                        )
                     )
                 } else null
             } else null
